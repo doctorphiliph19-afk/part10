@@ -18,6 +18,16 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontFamily: theme.fonts.main,
   },
+  invalidInput: {
+    borderColor: '#d73a4a',
+    marginBottom: 0,
+  },
+  error: {
+    color: '#d73a4a',
+    marginTop: 8,
+    marginHorizontal: 4,
+    marginBottom: 18,
+  },
   button: {
     height: 56,
     borderRadius: 8,
@@ -27,32 +37,90 @@ const styles = StyleSheet.create({
   },
 });
 
+const FormField = ({
+  name,
+  placeholder,
+  secureTextEntry = false,
+  autoCapitalize,
+  autoCorrect,
+  handleBlur,
+  handleChange,
+  values,
+  errors,
+  touched,
+}) => {
+  const error = touched[name] && errors[name];
+
+  return (
+    <View>
+      <TextInput
+        style={[styles.input, error && styles.invalidInput]}
+        placeholder={placeholder}
+        secureTextEntry={secureTextEntry}
+        autoCapitalize={autoCapitalize}
+        autoCorrect={autoCorrect}
+        value={values[name]}
+        onChangeText={handleChange(name)}
+        onBlur={handleBlur(name)}
+      />
+      {error && <Text style={styles.error}>{error}</Text>}
+    </View>
+  );
+};
+
 const SignIn = () => {
   const onSubmit = (values) => {
     console.log(values);
   };
 
+  const validate = (values) => {
+    const errors = {};
+
+    if (!values.username) {
+      errors.username = 'Username is required';
+    }
+    if (!values.password) {
+      errors.password = 'Password is required';
+    }
+
+    return errors;
+  };
+
   return (
     <Formik
       initialValues={{ username: '', password: '' }}
+      validate={validate}
       onSubmit={onSubmit}
     >
-      {({ handleChange, handleSubmit, values }) => (
+      {({
+        handleBlur,
+        handleChange,
+        handleSubmit,
+        values,
+        errors,
+        touched,
+      }) => (
         <View style={styles.container}>
-          <TextInput
-            style={styles.input}
+          <FormField
+            name="username"
             placeholder="Username"
             autoCapitalize="none"
             autoCorrect={false}
-            value={values.username}
-            onChangeText={handleChange('username')}
+            handleBlur={handleBlur}
+            handleChange={handleChange}
+            values={values}
+            errors={errors}
+            touched={touched}
           />
-          <TextInput
-            style={styles.input}
+          <FormField
+            name="password"
             placeholder="Password"
             secureTextEntry
-            value={values.password}
-            onChangeText={handleChange('password')}
+            handleBlur={handleBlur}
+            handleChange={handleChange}
+            values={values}
+            errors={errors}
+            touched={touched}
           />
           <Pressable style={styles.button} onPress={handleSubmit}>
             <Text color="white" fontSize="subheading" fontWeight="bold">
