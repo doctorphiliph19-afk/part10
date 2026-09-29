@@ -1,45 +1,96 @@
-import { View, Text, StyleSheet } from 'react-native';
+import { View, StyleSheet, Image } from 'react-native';
+import Text from './Text.jsx';
+import theme from '../theme.js';
 
 const styles = StyleSheet.create({
   container: {
-    padding: 20,
-    backgroundColor: '#ffffff',
+    backgroundColor: 'white',
+    padding: 16,
   },
-  fullName: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    marginBottom: 5,
+  topRow: {
+    flexDirection: 'row',
   },
-  description: {
-    fontSize: 16,
-    marginBottom: 10,
+  avatar: {
+    width: 50,
+    height: 50,
+    borderRadius: 4,
+  },
+  repositoryInfo: {
+    flex: 1,
+    marginLeft: 16,
   },
   language: {
-    fontSize: 16,
-    marginBottom: 10,
+    alignSelf: 'flex-start',
+    backgroundColor: theme.colors.primary,
+    paddingHorizontal: 8,
+    paddingVertical: 6,
+    borderRadius: 4,
+    marginTop: 8,
   },
-  stats: {
-    fontSize: 16,
-    marginBottom: 5,
+  statsContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    marginTop: 24,
+  },
+  stat: {
+    alignItems: 'center',
+    flex: 1,
   },
 });
+
+const formatCount = (count) => {
+  if (count < 1000) {
+    return count.toString();
+  }
+
+  return `${(count / 1000).toFixed(1)}k`;
+};
+
+const Statistic = ({ value, label }) => {
+  return (
+    <View style={styles.stat}>
+      <Text fontSize="subheading" fontWeight="bold">{value}</Text>
+      <Text fontSize="subheading" color="textSecondary">
+        {label}
+      </Text>
+    </View>
+  );
+};
 
 const RepositoryItem = ({ item }) => {
   return (
     <View style={styles.container}>
-      <Text style={styles.fullName}>Full name: {item.fullName}</Text>
+      <View style={styles.topRow}>
+        <Image style={styles.avatar} source={{ uri: item.ownerAvatarUrl }} />
 
-      <Text style={styles.description}>Description: {item.description}</Text>
+        <View style={styles.repositoryInfo}>
+          <Text fontWeight="bold" fontSize="subheading">
+            {item.fullName}
+          </Text>
 
-      <Text style={styles.language}>Language: {item.language}</Text>
+          <Text color="textSecondary">{item.description}</Text>
 
-      <Text style={styles.stats}>Stars: {item.stargazersCount}</Text>
+          <Text style={styles.language} color="white">
+            {item.language}
+          </Text>
+        </View>
+      </View>
 
-      <Text style={styles.stats}>Forks: {item.forksCount}</Text>
+      <View style={styles.statsContainer}>
+        <Statistic
+          value={formatCount(item.stargazersCount)}
+          label="Stars"
+        />
 
-      <Text style={styles.stats}>Reviews: {item.reviewCount}</Text>
+        <Statistic
+          value={formatCount(item.forksCount)}
+          label="Forks"
+        />
 
-      <Text style={styles.stats}>Rating: {item.ratingAverage}</Text>
+        <Statistic value={item.reviewCount} label="Reviews" />
+
+        <Statistic value={item.ratingAverage} label="Rating" />
+      </View>
     </View>
   );
 };
