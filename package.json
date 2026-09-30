@@ -5,6 +5,7 @@
   "dependencies": {
     "@apollo/client": "^3.14.1",
     "@expo/webpack-config": "^0.17.0",
+    "dotenv": "^18.0.4",
     "expo": "^46.0.21",
     "expo-constants": "~13.2.4",
     "expo-modules-core": "~57.0.19",
