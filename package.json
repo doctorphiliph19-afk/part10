@@ -18,7 +18,8 @@
     "react-dom": "18.0.0",
     "react-native": "0.69.9",
     "react-native-web": "~0.18.7",
-    "react-router-native": "^6.30.6"
+    "react-router-native": "^6.30.6",
+    "yup": "^0.32.11"
   },
   "scripts": {
     "start": "cross-env NODE_OPTIONS=--openssl-legacy-provider expo start",
