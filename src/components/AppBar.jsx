@@ -47,6 +47,11 @@ const AppBar = () => {
         </Link>
         {data?.me ? (
           <>
+            <Link to="/my-reviews" style={styles.tab}>
+              <Text color="white" fontWeight="bold" style={styles.tabText}>
+                My reviews
+              </Text>
+            </Link>
             <Link to="/create/review" style={styles.tab}>
               <Text color="white" fontWeight="bold" style={styles.tabText}>
                 Create a review
