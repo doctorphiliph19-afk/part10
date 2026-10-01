@@ -1,5 +1,6 @@
 import { render, within } from '@testing-library/react-native';
 import { describe, expect, it, jest } from '@jest/globals';
+import { NativeRouter } from 'react-router-native';
 import RepositoryList from './RepositoryList';
 import useRepositories from '../hooks/useRepositories';
 
@@ -55,7 +56,11 @@ describe('RepositoryList', () => {
         repositories: repositories.edges.map(({ node }) => node),
       });
 
-      const { getAllByTestId } = render(<RepositoryList />);
+      const { getAllByTestId } = render(
+        <NativeRouter>
+          <RepositoryList />
+        </NativeRouter>,
+      );
 
       const repositoryItems = getAllByTestId('repositoryItem');
       const [firstRepositoryItem, secondRepositoryItem] = repositoryItems;
