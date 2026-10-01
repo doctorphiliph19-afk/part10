@@ -1,5 +1,13 @@
-import { FlatList, Modal, Pressable, StyleSheet, View } from 'react-native';
+import {
+  FlatList,
+  Modal,
+  Pressable,
+  StyleSheet,
+  TextInput,
+  View,
+} from 'react-native';
 import { useState } from 'react';
+import { useDebounce } from 'use-debounce';
 import { useNavigate } from 'react-router-native';
 import RepositoryItem from './RepositoryItem';
 import useRepositories from '../hooks/useRepositories';
@@ -29,6 +37,14 @@ const styles = StyleSheet.create({
     backgroundColor: '#e1e4e8',
     paddingHorizontal: 20,
     paddingVertical: 18,
+  },
+  searchInput: {
+    backgroundColor: theme.colors.white,
+    borderRadius: 8,
+    fontSize: 18,
+    marginBottom: 12,
+    paddingHorizontal: 14,
+    paddingVertical: 12,
   },
   selector: {
     alignItems: 'center',
@@ -66,9 +82,12 @@ const ItemSeparator = () => <View style={styles.separator} />;
 const RepositoryList = () => {
   const [selectedOrder, setSelectedOrder] = useState('latest');
   const [selectorVisible, setSelectorVisible] = useState(false);
+  const [searchKeyword, setSearchKeyword] = useState('');
+  const [debouncedSearchKeyword] = useDebounce(searchKeyword, 500);
   const { repositories } = useRepositories({
     orderBy: orderOptions[selectedOrder].orderBy,
     orderDirection: orderOptions[selectedOrder].orderDirection,
+    searchKeyword: debouncedSearchKeyword,
   });
   const navigate = useNavigate();
 
@@ -86,6 +105,13 @@ const RepositoryList = () => {
       keyExtractor={(item) => item.id}
       ListHeaderComponent={
         <View style={styles.header}>
+          <TextInput
+            accessibilityLabel="Search repositories"
+            onChangeText={setSearchKeyword}
+            placeholder="Search repositories"
+            style={styles.searchInput}
+            value={searchKeyword}
+          />
           <Pressable
             accessibilityRole="button"
             onPress={() => setSelectorVisible(true)}
