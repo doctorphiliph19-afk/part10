@@ -69,7 +69,7 @@ const SingleRepository = () => {
   const [loadingMore, setLoadingMore] = useState(false);
   const { repositoryId } = useParams();
   const { data, loading, error, fetchMore } = useQuery(GET_REPOSITORY, {
-    variables: { repositoryId, first: 5, after: null },
+    variables: { repositoryId, first: 5 },
     fetchPolicy: 'cache-and-network',
   });
 

@@ -1,0 +1,54 @@
+diff --git a/node_modules/react-native-web/dist/exports/render/index.js b/node_modules/react-native-web/dist/exports/render/index.js
+index 85f6fad..6335b8c 100644
+--- a/node_modules/react-native-web/dist/exports/render/index.js
++++ b/node_modules/react-native-web/dist/exports/render/index.js
+@@ -6,13 +6,25 @@
+  *
+  *
+  */
+-import { hydrate as domHydrate, render as domRender } from 'react-dom';
++import { flushSync } from 'react-dom';
++import { createRoot as domCreateRoot, hydrateRoot as domHydrateRoot } from 'react-dom/client';
+ import { createSheet } from '../StyleSheet/dom';
++export const roots = new WeakMap();
+ export function hydrate(element, root, callback) {
+   createSheet(root);
+-  return domHydrate(element, root, callback);
++  const reactRoot = domHydrateRoot(root, element);
++  roots.set(root, reactRoot);
++  if (callback) callback();
++  return reactRoot;
+ }
+ export default function render(element, root, callback) {
+   createSheet(root);
+-  return domRender(element, root, callback);
++  let reactRoot = roots.get(root);
++  if (!reactRoot) {
++    reactRoot = domCreateRoot(root);
++    roots.set(root, reactRoot);
++  }
++  flushSync(() => reactRoot.render(element));
++  if (callback) callback();
++  return reactRoot;
+ }
+\ No newline at end of file
+diff --git a/node_modules/react-native-web/dist/exports/unmountComponentAtNode/index.js b/node_modules/react-native-web/dist/exports/unmountComponentAtNode/index.js
+index 7eb4a69..7b2f4f4 100644
+--- a/node_modules/react-native-web/dist/exports/unmountComponentAtNode/index.js
++++ b/node_modules/react-native-web/dist/exports/unmountComponentAtNode/index.js
+@@ -6,5 +6,11 @@
+  *
+  *
+  */
+-import { unmountComponentAtNode } from 'react-dom';
+-export default unmountComponentAtNode;
+\ No newline at end of file
++import { roots } from '../render';
++export default function unmountComponentAtNode(root) {
++	const reactRoot = roots.get(root);
++	if (!reactRoot) return false;
++	reactRoot.unmount();
++	roots.delete(root);
++	return true;
++}
+\ No newline at end of file
